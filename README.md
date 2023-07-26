@@ -23,7 +23,8 @@ async def default(ctx: commands.Context):
  await paginator.default_paginator() #send the paginator
 ```
 
-Custom paginator
+# Custom paginator
+
 ```py
 from discord_paginator import Paginator
 

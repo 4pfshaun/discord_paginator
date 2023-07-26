@@ -17,7 +17,7 @@ class Paginator(View):
         ctx: :class:`discord.ext.commands.Context`
           The context where the paginator was invoked in
         embeds: :class:`list`
-            The embeds that will be paginated  
+          The embeds that will be paginated  
     """
    super().__init__(timeout=None)
    self.embeds = embeds
