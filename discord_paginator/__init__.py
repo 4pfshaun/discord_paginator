@@ -80,10 +80,15 @@ class Paginator(View):
    await self.start()
 
   async def start(self): 
+   if len(self.embeds) == 1:
+    view = None 
+   else: 
+    view = self 
+
    try: 
     if isinstance(self.embeds[0], str):
-     self.message = await self.ctx.send(content=self.embeds[0], embed=None, view=self)
+     self.message = await self.ctx.send(content=self.embeds[0], embed=None, view=view)
     elif isinstance(self.embeds[0], Embed): 
-     self.message = await self.ctx.send(content=None, embed=self.embeds[0], view=self) 
+     self.message = await self.ctx.send(content=None, embed=self.embeds[0], view=view) 
    except HTTPException: 
     self.stop()
