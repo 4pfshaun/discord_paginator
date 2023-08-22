@@ -6,7 +6,7 @@ desc = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="discord_paginator",
-    version="2.0",
+    version="2.0.1",
     description="A module which allows easy implementation of button pagination for your embeds",
     long_description=desc,
     long_description_content_type="text/markdown",
