@@ -5,9 +5,6 @@ from discord.ext import commands
 from typing import List, Union
 
 from .buttons import first_page, last_page, next_page, prev_page, goto_page, delete_page
-from .view import CustomInteraction
-
-Interaction.warn = CustomInteraction.warn
 
 class Paginator(View): 
   def __init__(self, ctx: commands.Context, embeds: List[Union[str, Embed]], bad_invoker_message: str="You are **not** the author of this embed"): 
@@ -65,7 +62,7 @@ class Paginator(View):
 
   async def interaction_check(self, interaction: Interaction) -> bool:
    if interaction.user.id != self.ctx.author.id: 
-    await interaction.warn(self.bad_invoker_message)
+    await interaction.response.send_message(embed=Embed(color=0xffff00, description=f"⚠️ {self.user.mention}: {self.bad_invoker_message}"), ephemeral=True)
     return False 
    return True 
 

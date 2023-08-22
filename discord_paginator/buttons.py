@@ -12,9 +12,9 @@ class goto_modal(Modal, title="Go to"):
      view.page = num 
      await view.update_view(interaction)
     else: 
-     return await interaction.warn("Invalid Page") 
+     return await interaction.response.send_message("Invalid Page", ephemeral=True) 
   except ValueError: 
-   return await interaction.warn("This is not a number")
+   return await interaction.response.send_message("This is not a number", ephemeral=True)
 
 class prev_page(Button): 
   def __init__(self, label, emoji, style): 
