@@ -62,7 +62,7 @@ class Paginator(View):
 
   async def interaction_check(self, interaction: Interaction) -> bool:
    if interaction.user.id != self.ctx.author.id: 
-    await interaction.response.send_message(embed=Embed(color=0xffff00, description=f"⚠️ {self.user.mention}: {self.bad_invoker_message}"), ephemeral=True)
+    await interaction.response.send_message(embed=Embed(color=0xffff00, description=f"⚠️ {interaction.user.mention}: {self.bad_invoker_message}"), ephemeral=True)
     return False 
    return True 
 
