@@ -1,77 +1,72 @@
-from discord import Interaction, TextStyle
-from discord.ui import Button, Modal, TextInput 
+import discord
 
-class goto_modal(Modal, title="Go to"): 
- page = TextInput(label="page", placeholder='page number', required=True, style=TextStyle.short)
-
- async def on_submit(self, interaction: Interaction): 
-  try: 
+class Goto(discord.ui.Modal, title="Go to"): 
+  page = discord.ui.TextInput(
+    label="Page", 
+    placeholder='Page Number', 
+    required=True, 
+    style=discord.TextStyle.short
+  )
+ 
+  async def on_submit(self, interaction: discord.Interaction): 
     view = self.view
     num = int(self.page.value)-1
     if num in range(len(view.embeds)): 
-     view.page = num 
-     await view.update_view(interaction)
+      view.page = num 
+      await view.update_view(interaction)
     else: 
-     return await interaction.response.send_message("Invalid Page", ephemeral=True) 
-  except ValueError: 
-   return await interaction.response.send_message("This is not a number", ephemeral=True)
+      return await interaction.response.send_message("Invalid Page", ephemeral=True) 
+    
+  async def on_error(self, interaction: discord.Interaction, error: Exception):
+    await interaction.response.send_message(
+      embed=discord.Embed(
+        color=0xffff00, 
+        description=f"⚠️ {interaction.user.mention}: A problem occured while changing the page"
+      ), 
+      ephemeral=True
+    )
 
-class prev_page(Button): 
-  def __init__(self, label, emoji, style): 
-   super().__init__(label=label, emoji=emoji, style=style)
+class Previous(discord.ui.Button): 
+  async def callback(self, interaction: discord.Interaction): 
+    view = self.view 
+    
+    if view.page == 0: 
+      view.page = len(view.embeds)-1
+    else: 
+      view.page -= 1
+    
+    await view.update_view(interaction)
 
-  async def callback(self, interaction: Interaction): 
-   view = self.view 
-   
-   if view.page == 0: 
-    view.page = len(view.embeds)-1
-   else: 
-    view.page -= 1
-   
-   await view.update_view(interaction)
-
-class next_page(Button): 
- def __init__(self, label, emoji, style): 
-  super().__init__(label=label, emoji=emoji, style=style)
-
- async def callback(self, interaction: Interaction): 
-  view = self.view 
+class Next(discord.ui.Button): 
+  async def callback(self, interaction: discord.Interaction): 
+    view = self.view 
+    
+    if view.page == len(view.embeds)-1: 
+      view.page = 0
+    else: 
+      view.page += 1 
+    
+    await view.update_view(interaction)
+ 
+class First(discord.ui.Button): 
+  async def callback(self, interaction: discord.Interaction):
+    self.view.page = 0
+    await self.view.update_view(interaction)
+ 
+class Last(discord.ui.Button): 
   
-  if view.page == len(view.embeds)-1: 
-   view.page = 0
-  else: 
-   view.page += 1 
-  
-  await view.update_view(interaction)
+  async def callback(self, interaction: discord.Interaction):
+    self.view.page = len(self.view.embeds)-1
+    await self.view.update_view(interaction)
 
-class first_page(Button): 
- def __init__(self, label, emoji, style): 
-  super().__init__(label=label, emoji=emoji, style=style)
+class Delete(discord.ui.Button): 
 
- async def callback(self, interaction: Interaction):
-  self.view.page = 0
-  await self.view.update_view(interaction)
+  async def callback(self, interaction: discord.Interaction): 
+    await interaction.message.delete()
 
-class last_page(Button): 
- def __init__(self, label, emoji, style): 
-  super().__init__(label=label, emoji=emoji, style=style)
+class GotoPage(discord.ui.Button): 
 
- async def callback(self, interaction: Interaction):
-  self.view.page = len(self.view.embeds)-1
-  await self.view.update_view(interaction)
-
-class delete_page(Button): 
- def __init__(self, label, emoji, style): 
-  super().__init__(label=label, emoji=emoji, style=style)
-
- async def callback(self, interaction: Interaction): 
-  await interaction.message.delete()
-
-class goto_page(Button): 
- def __init__(self, label, emoji, style): 
-  super().__init__(label=label, emoji=emoji, style=style) 
-
- async def callback(self, interaction: Interaction):  
-  modal = goto_modal()
-  modal.view = self.view
-  return await interaction.response.send_modal(modal)
+  async def callback(self, interaction: discord.Interaction):  
+    modal = Goto()
+    modal.view = self.view
+    return await interaction.response.send_modal(modal)
